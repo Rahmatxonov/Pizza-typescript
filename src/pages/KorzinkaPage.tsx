@@ -48,23 +48,21 @@ const KorzinkaPage = () => {
       </div>
       <div className="max-w-[820px] w-full m-auto">
         <div>
+          <div className="flex items-center justify-between gap-x-[482px] mt-[135px]">
+            <span className="flex items-center space-x-[17px]">
+              <SlBasket className="text-[30px]" />
+              <p className="font-bold text-[32px] leading=[38px]">Корзина</p>
+            </span>
+            <span className="flex items-center space-x-2 opacity-40">
+              <RiDeleteBinLine className="text-[18px]" />
+              <p className="font-normal text-[16px] leading-[19px]">
+                Очистить корзину
+              </p>
+            </span>
+          </div>
           {orderList.length > 0 ? (
             orderList.map((item: getDataType) => (
               <div key={item.id}>
-                <div className="flex items-center justify-between gap-x-[482px] mt-[135px]">
-                  <span className="flex items-center space-x-[17px]">
-                    <SlBasket className="text-[30px]" />
-                    <p className="font-bold text-[32px] leading=[38px]">
-                      Корзина
-                    </p>
-                  </span>
-                  <span className="flex items-center space-x-2 opacity-40">
-                    <RiDeleteBinLine className="text-[18px]" />
-                    <p className="font-normal text-[16px] leading-[19px]">
-                      Очистить корзину
-                    </p>
-                  </span>
-                </div>
                 <div
                   className="flex items-center justify-between mt-[60px]"
                   key={item.id}
@@ -105,22 +103,6 @@ const KorzinkaPage = () => {
                   <p>{item.price * item.count} ₽</p>
                   <IoCloseCircleOutline className="w-[32px] h-[32px] opacity-20" />
                 </div>
-                <div className="flex items-center justify-between mt-[60px]">
-                  <p>Всего пицц: {orderList.length} шт.</p>
-                  <p>Сумма заказа: {getTotalPrice()} ₽</p>
-                </div>
-                <div className="flex items-center justify-between mt-[60px]">
-                  <button
-                    onClick={() => navigate(-1)}
-                    className="flex items-center p-4 w-[211px] h-[55px] rounded-[30px] border-[2px] border-[#CACACA] opacity-40 font-normal text-[16px] leading-[19px]"
-                  >
-                    <MdOutlineKeyboardArrowLeft className="w-[32px] h-[24px]" />
-                    Вернуться назад
-                  </button>
-                  <button className="w-[211px] h-[55px] rounded-[30px] font-bold text-[16px] leading-[19px] bg-[#FE5F1E] text-white">
-                    Оплатить сейчас
-                  </button>
-                </div>
               </div>
             ))
           ) : (
@@ -145,6 +127,22 @@ const KorzinkaPage = () => {
               </button>
             </div>
           )}
+        </div>
+        <div className="flex items-center justify-between mt-[60px]">
+          <p>Всего пицц: {orderList.length} шт.</p>
+          <p>Сумма заказа: {getTotalPrice()} ₽</p>
+        </div>
+        <div className="flex items-center justify-between mt-[60px]">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center p-4 w-[211px] h-[55px] rounded-[30px] border-[2px] border-[#CACACA] opacity-40 font-normal text-[16px] leading-[19px]"
+          >
+            <MdOutlineKeyboardArrowLeft className="w-[32px] h-[24px]" />
+            Вернуться назад
+          </button>
+          <button className="w-[211px] h-[55px] rounded-[30px] font-bold text-[16px] leading-[19px] bg-[#FE5F1E] text-white">
+            Оплатить сейчас
+          </button>
         </div>
       </div>
     </div>
