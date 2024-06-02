@@ -1,29 +1,75 @@
+import { Segmented } from "antd";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getOrderProducts } from "../store/reducer";
+import axios from "axios";
 
 interface Pizza {
-  id: number;
+  id: string;
   imageUrl: string;
   title: string;
-  types: string[];
-  sizes: number[];
+  types?: string[];
+  sizes?: number[];
+  price: number;
+  sortValue: string;
+  setTypeValue: (value: string) => void;
+  setSizeValue: (value: string) => void;
+  onClickBtnOrder: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+interface getDataType {
+  id: string;
+  imgUrl: string;
+  title: string;
+  type: string;
+  size: string;
+  count: number;
   price: number;
 }
 
-const Pizza = () => {
+interface RootState {
+  orderList: Pizza[];
+}
+
+interface PizzaComponentProps {
+  sortValue: string;
+}
+
+const PizzaComponent: React.FC<PizzaComponentProps> = ({ sortValue }) => {
+  const orderProductList = useSelector((state: RootState) => state.orderList);
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [typeValue, setTypeValue] = useState("тонкое");
+  const [sizeValue, setSizeValue] = useState("26 см.");
+  const dispatch = useDispatch();
 
+  const onClickBtnOrder = (evt: React.MouseEvent<HTMLButtonElement>) => {
+    const clickedId = (evt.target as HTMLButtonElement).id;
+    const orderClickData = pizzas.find((item) => item.id === clickedId);
+
+    if (orderClickData) {
+      const data: getDataType = {
+        id: orderClickData.id,
+        imgUrl: orderClickData.imageUrl,
+        title: orderClickData.title,
+        type: typeValue,
+        size: sizeValue,
+        count: 1,
+        price: orderClickData.price,
+      };
+      dispatch(getOrderProducts(data));
+    }
+  };
   useEffect(() => {
-    fetch("http://localhost:3000/pizza")
+    axios
+      .get(`http://localhost:3000/pizza?_sort=${sortValue}`)
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return res.json();
+        setPizzas(res.data);
       })
-      .then((data: Pizza[]) => setPizzas(data))
-      .catch((error) => setError(error.message));
-  }, []);
+      .catch((error) => {
+        console.error("Error fetching sorted pizzas:", error);
+      });
+  }, [sortValue]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -33,47 +79,44 @@ const Pizza = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Все пиццы</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {pizzas.map((pizza) => (
+        {pizzas.map(({ id, imageUrl, price, title }) => (
           <div
-            key={pizza.id}
+            key={id}
             className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-200"
           >
             <img
-              src={pizza.imageUrl}
-              alt={pizza.title}
+              src={imageUrl}
+              alt={title}
               className="w-full object-cover mb-4 rounded-lg "
             />
             <h2 className="mb-2 text-center font-extrabold text-[20px] pt-[11px]">
-              {pizza.title}
+              {title}
             </h2>
-            <div className="flex flex-col mb-2 bg-[#F3F3F3] rounded-[10px]">
-              <span className="flex items-center text-center mx-auto m-2 space-x-2">
-                <button className="p-2 active:bg-white cursor-pointer rounded-[5px] font-bold text-[14px] leading-[17px] text-[#2C2C2C]  focus:bg-white">
-                  Тонкое
-                </button>
-                /
-                <button className="p-2 active:bg-white cursor-pointer rounded-[5px] font-bold text-[14px] leading-[17px] text-[#2C2C2C]  focus:bg-white">
-                  Традиционное
-                </button>
-              </span>
-              <div className="flex flex-col mb-4">
-                <div className="flex mx-auto space-x-5">
-                  {pizza.sizes.map((size, index) => (
-                    <button
-                      key={index}
-                      className="font-bold text-[14px] leading-[17px] text-[#2C2C2C] py-2 px-4 rounded-[5px] active:bg-white transition-colors duration-200 focus:bg-white"
-                    >
-                      {size} см
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <Segmented<string>
+              options={["тонкое", "традиционное"]}
+              onChange={(value) => {
+                setTypeValue(value);
+              }}
+              className="w-full mt-[22px]"
+            />
+
+            <Segmented<string>
+              options={["26 см.", "30 см.", "40 см."]}
+              onChange={(value) => {
+                setSizeValue(value);
+              }}
+              className="w-full mt-[7px]"
+            />
+
             <div className="flex justify-between items-center mt-[24px]">
               <p className="font-bold text-[22px] leading-[26px] text-black">
-                от {pizza.price} ₽
+                от {price} ₽
               </p>
-              <button className="dabavit font-bold text-[16px] leading-[19px] rounded-[30px] text-[#EB5A1E] transition-colors duration-200 hover:bg-[#FE5F1E] hover:text-white">
+              <button
+                id={id}
+                onClick={onClickBtnOrder}
+                className="dabavit font-bold text-[16px] leading-[19px] rounded-[30px] text-[#EB5A1E] transition-colors duration-200 hover:bg-[#FE5F1E] hover:text-white"
+              >
                 + Добавить
               </button>
             </div>
@@ -84,4 +127,4 @@ const Pizza = () => {
   );
 };
 
-export default Pizza;
+export default PizzaComponent;

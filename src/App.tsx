@@ -1,12 +1,26 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import KorzinkaPage from "./pages/KorzinkaPage";
+import { Suspense } from "react";
+import { LazyHome, LazyKorzinka } from "./pages";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/korzinka" element={<KorzinkaPage />} />
+      <Route
+        path="/"
+        element={
+          <Suspense fallback="loading...">
+            <LazyHome />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/korzinka"
+        element={
+          <Suspense fallback="loading...">
+            <LazyKorzinka />
+          </Suspense>
+        }
+      />
     </Routes>
   );
 }
