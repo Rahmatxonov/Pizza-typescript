@@ -8,6 +8,7 @@ import { decOrder, incOrder } from "../store/reducer";
 
 import logo from "../assets/icons/logo.svg";
 import shop from "../assets/images/shopping-cart-colour.png";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 
 const KorzinkaPage = () => {
   const navigate = useNavigate();
@@ -88,16 +89,16 @@ const KorzinkaPage = () => {
                       onClick={() =>
                         item.count != 1 && dispatch(decOrder(item.id))
                       }
-                      className="w-[32px] h-[32px] rounded-[50%] border-[3px] border-[#FE5F1E]"
+                      className="flex items-center justify-center w-[32px] h-[32px] rounded-[50%] border-[3px] border-[#FE5F1E]"
                     >
-                      -
+                      <MinusOutlined />
                     </button>
                     <p>{item.count}</p>
                     <button
                       onClick={() => dispatch(incOrder(item.id))}
-                      className="w-[32px] h-[32px] rounded-[50%] border-[3px] border-[#FE5F1E]"
+                      className="flex items-center justify-center w-[32px] h-[32px] rounded-[50%] border-[3px] border-[#FE5F1E]"
                     >
-                      +
+                      <PlusOutlined />
                     </button>
                   </span>
                   <p>{item.price * item.count} ₽</p>
